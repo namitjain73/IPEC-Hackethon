@@ -1,12 +1,13 @@
 const axios = require('axios');
 const { fetchLatestImagery: fetchAgromonitoring, generateMockData: generateAgroMockData } = require('./agromonitoringService');
+const { getSentinelHubAuthHeader } = require('./sentinelHubAuth');
 
 // ============================================
 // Configuration - SENTINEL HUB PRIMARY
 // AGROMONITORING FALLBACK
 // ============================================
-const ENABLE_REAL_SATELLITE_API = true; // ✅ ENABLED FOR REAL DATA
-const SENTINEL_HUB_AUTH_TOKEN = process.env.SENTINEL_HUB_TOKEN || 'PLAKe3dfcf56b8d440d797be4e9ef1102d46';
+const ENABLE_REAL_SATELLITE_API = process.env.ENABLE_REAL_SATELLITE_API === 'true';
+const SENTINEL_HUB_AUTH_TOKEN = process.env.SENTINEL_HUB_TOKEN;
 const SENTINEL_HUB_REGION = process.env.SENTINEL_HUB_REGION || 'eu'; // 'eu' or 'us'
 
 // API Endpoints
@@ -29,8 +30,6 @@ const RETRY_DELAY = 1000; // 1 second between retries
 // Debug log
 console.log(`[SatelliteService] DEBUG - ENABLE_REAL_SATELLITE_API env value: "${process.env.ENABLE_REAL_SATELLITE_API}"`);
 console.log(`[SatelliteService] DEBUG - Token loaded: ${SENTINEL_HUB_AUTH_TOKEN ? 'YES ✓' : 'NO ✗'}`);
-console.log(`[SatelliteService] DEBUG - Token length: ${SENTINEL_HUB_AUTH_TOKEN.length} characters`);
-console.log(`[SatelliteService] DEBUG - Token (first 10 chars): ${SENTINEL_HUB_AUTH_TOKEN?.substring(0, 10)}...`);
 console.log(`[SatelliteService] Initialized - Real API: ${ENABLE_REAL_SATELLITE_API ? 'ENABLED ✅' : 'DISABLED (using mock data)'}`);
 console.log(`[SatelliteService] Region: ${SENTINEL_HUB_REGION.toUpperCase()} | Statistics Endpoint: ${getStatisticsEndpoint()}`);
 
@@ -76,15 +75,18 @@ async function catalogSearch(latitude, longitude, sizeKm, startDate, endDate) {
     console.log(`[Catalog API] Collection: sentinel-2-l2a`);
 
     const response = await retryWithBackoff(
-      () => axios.post(APIs.CATALOG, {
-        bbox: [bbox.west, bbox.south, bbox.east, bbox.north],
-        datetime: `${startDate}T00:00:00Z/${endDate}T23:59:59Z`,
-        collections: ['sentinel-2-l2a'],
-        limit: 10,
-      }, {
-        timeout: SENTINEL_HUB_TIMEOUT,
-        headers: { 'Authorization': `Bearer ${SENTINEL_HUB_AUTH_TOKEN}` }
-      }),
+      async () => {
+        const authHeader = await getSentinelHubAuthHeader();
+        return axios.post(APIs.CATALOG, {
+          bbox: [bbox.west, bbox.south, bbox.east, bbox.north],
+          datetime: `${startDate}T00:00:00Z/${endDate}T23:59:59Z`,
+          collections: ['sentinel-2-l2a'],
+          limit: 10,
+        }, {
+          timeout: SENTINEL_HUB_TIMEOUT,
+          headers: authHeader,
+        });
+      },
       RETRY_ATTEMPTS
     );
 
@@ -115,7 +117,6 @@ async function catalogSearch(latitude, longitude, sizeKm, startDate, endDate) {
       
       if (error.response.status === 401) {
         console.error('[Catalog API] 🔐 AUTHENTICATION ERROR - Invalid or expired token');
-        console.error('[Catalog API] Token being used (first 15 chars):', SENTINEL_HUB_AUTH_TOKEN?.substring(0, 15) + '...');
       }
     }
     return {
