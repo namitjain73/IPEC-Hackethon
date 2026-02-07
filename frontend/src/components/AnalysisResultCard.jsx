@@ -58,6 +58,54 @@ export function AnalysisResultCard({ analysis }) {
 
   return (
     <div className="analysis-result-container">
+      {/* Data Source Indicator */}
+      {analysis.satelliteData?.fallbackUsed && (
+        <div style={{
+          background: '#fef3c7',
+          border: '2px solid #f59e0b',
+          borderRadius: '8px',
+          padding: '12px',
+          marginBottom: '16px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px'
+        }}>
+          <span style={{fontSize: '20px'}}>⚠️</span>
+          <div>
+            <div style={{fontSize: '14px', fontWeight: '600', color: '#92400e'}}>
+              Using Simulated Satellite Data
+            </div>
+            <div style={{fontSize: '12px', color: '#b45309', marginTop: '2px'}}>
+              Real satellite API unavailable - System using mock data for analysis (Results are representative)
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Real Data Indicator */}
+      {analysis.satelliteData?.fallbackUsed === false && (
+        <div style={{
+          background: '#d1fae5',
+          border: '2px solid #10b981',
+          borderRadius: '8px',
+          padding: '12px',
+          marginBottom: '16px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px'
+        }}>
+          <span style={{fontSize: '20px'}}>✅</span>
+          <div>
+            <div style={{fontSize: '14px', fontWeight: '600', color: '#065f46'}}>
+              Real Satellite Data
+            </div>
+            <div style={{fontSize: '12px', color: '#047857', marginTop: '2px'}}>
+              Analysis using actual {analysis.satelliteData?.dataSource || 'satellite'} imagery
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header Card */}
       <div className={`unified-card ${riskStyle.variant}`}>
         <div className="unified-card-header">
@@ -264,6 +312,97 @@ export function AnalysisResultCard({ analysis }) {
               </div>
               <div className="unified-card-description" style={{marginTop: '12px'}}>
                 The percentage of pixels with valid data. Clouds and water may cause invalid pixels. Higher = better quality analysis.
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Change Detection Section - Pixel Analysis */}
+      {analysis.changeDetection && typeof analysis.changeDetection === 'object' && (
+        <>
+          <div className="card-section-title">🔄 Pixel Change Analysis</div>
+          <div className="unified-card unified-card-primary">
+            <div className="unified-card-header">
+              <span className="unified-card-icon">📍</span>
+              <span className="unified-card-title">Pixel Distribution</span>
+            </div>
+            <div className="unified-card-body">
+              <div style={{fontSize: '14px', fontWeight: '600', color: '#1f2937', marginBottom: '16px'}}>
+                Total pixels analyzed: {(analysis.changeDetection.decreaseCount + analysis.changeDetection.stableCount + (analysis.changeDetection.increaseCount || 0))?.toLocaleString()}
+              </div>
+              
+              {/* Pixel breakdown grid */}
+              <div className="unified-card-grid unified-card-grid-3col" style={{marginTop: '12px', gap: '8px'}}>
+                <div style={{padding: '12px', background: '#fee2e2', borderRadius: '6px', textAlign: 'center'}}>
+                  <div style={{fontSize: '18px', fontWeight: '700', color: '#dc2626'}}>
+                    {analysis.changeDetection.decreaseCount?.toLocaleString() || 0}
+                  </div>
+                  <div style={{fontSize: '11px', color: '#991b1b', marginTop: '4px', fontWeight: '500'}}>
+                    DECREASED VEGETATION
+                  </div>
+                  <div style={{fontSize: '10px', color: '#7f1d1d', marginTop: '2px'}}>
+                    {((analysis.changeDetection.decreaseCount || 0) / (analysis.changeDetection.decreaseCount + analysis.changeDetection.stableCount + (analysis.changeDetection.increaseCount || 0)) * 100).toFixed(1)}%
+                  </div>
+                </div>
+
+                <div style={{padding: '12px', background: '#dbeafe', borderRadius: '6px', textAlign: 'center'}}>
+                  <div style={{fontSize: '18px', fontWeight: '700', color: '#2563eb'}}>
+                    {analysis.changeDetection.stableCount?.toLocaleString() || 0}
+                  </div>
+                  <div style={{fontSize: '11px', color: '#1e40af', marginTop: '4px', fontWeight: '500'}}>
+                    STABLE VEGETATION
+                  </div>
+                  <div style={{fontSize: '10px', color: '#1e3a8a', marginTop: '2px'}}>
+                    {((analysis.changeDetection.stableCount || 0) / (analysis.changeDetection.decreaseCount + analysis.changeDetection.stableCount + (analysis.changeDetection.increaseCount || 0)) * 100).toFixed(1)}%
+                  </div>
+                </div>
+
+                <div style={{padding: '12px', background: '#dcfce7', borderRadius: '6px', textAlign: 'center'}}>
+                  <div style={{fontSize: '18px', fontWeight: '700', color: '#16a34a'}}>
+                    {analysis.changeDetection.increaseCount?.toLocaleString() || 0}
+                  </div>
+                  <div style={{fontSize: '11px', color: '#166534', marginTop: '4px', fontWeight: '500'}}>
+                    INCREASED VEGETATION
+                  </div>
+                  <div style={{fontSize: '10px', color: '#15803d', marginTop: '2px'}}>
+                    {((analysis.changeDetection.increaseCount || 0) / (analysis.changeDetection.decreaseCount + analysis.changeDetection.stableCount + (analysis.changeDetection.increaseCount || 0)) * 100).toFixed(1)}%
+                  </div>
+                </div>
+              </div>
+
+              {/* Visual bar chart */}
+              <div style={{marginTop: '16px', marginBottom: '12px'}}>
+                <div style={{width: '100%', display: 'flex', gap: '2px', borderRadius: '6px', overflow: 'hidden', height: '20px'}}>
+                  <div 
+                    style={{
+                      flex: (analysis.changeDetection.decreaseCount || 0) / (analysis.changeDetection.decreaseCount + analysis.changeDetection.stableCount + (analysis.changeDetection.increaseCount || 0)),
+                      background: '#dc2626',
+                      transition: 'flex 0.3s ease'
+                    }}
+                    title={`Decreased: ${analysis.changeDetection.decreaseCount?.toLocaleString()}`}
+                  />
+                  <div 
+                    style={{
+                      flex: (analysis.changeDetection.stableCount || 0) / (analysis.changeDetection.decreaseCount + analysis.changeDetection.stableCount + (analysis.changeDetection.increaseCount || 0)),
+                      background: '#3b82f6',
+                      transition: 'flex 0.3s ease'
+                    }}
+                    title={`Stable: ${analysis.changeDetection.stableCount?.toLocaleString()}`}
+                  />
+                  <div 
+                    style={{
+                      flex: (analysis.changeDetection.increaseCount || 0) / (analysis.changeDetection.decreaseCount + analysis.changeDetection.stableCount + (analysis.changeDetection.increaseCount || 0)),
+                      background: '#22c55e',
+                      transition: 'flex 0.3s ease'
+                    }}
+                    title={`Increased: ${analysis.changeDetection.increaseCount?.toLocaleString()}`}
+                  />
+                </div>
+              </div>
+
+              <div className="unified-card-description">
+                Shows the distribution of pixel-level changes detected in the satellite imagery. Red = vegetation loss, Blue = stable/unchanged, Green = vegetation growth.
               </div>
             </div>
           </div>

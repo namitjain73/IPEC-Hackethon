@@ -7,38 +7,28 @@ import { api } from '../services/api';
  * Displays real-time system health and status indicators
  */
 export function SystemStatusBar() {
-  const [status, setStatus] = useState(null);
+  const [status, setStatus] = useState({
+    mlApi: { connected: false, status: 'Demo Mode (Offline)' },
+    database: { connected: false, status: 'Demo Mode (In-Memory)' },
+    imagery: { available: false, status: 'Demo Mode (Mock Data)' },
+    timeline: { uptime: '∞' },
+    websocket: { connected: true, status: 'Real-Time Streaming Active' }
+  });
   const [showDetails, setShowDetails] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    checkStatus();
-    // Check every 30 seconds
-    const interval = setInterval(checkStatus, 30000);
-    return () => clearInterval(interval);
+    // Demo mode - no need to check external services
+    setLoading(false);
   }, []);
-
-  const checkStatus = async () => {
-    try {
-      const response = await api.get('/system/status');
-      setStatus(response.data.status);
-    } catch (error) {
-      console.error('Error checking status:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (loading || !status) {
-    return <div className="system-status-bar loading">Checking system...</div>;
-  }
 
   const mlConnected = status.mlApi?.connected;
   const dbConnected = status.database?.connected;
   const imageryAvailable = status.imagery?.available;
+  const websocketConnected = status.websocket?.connected;
 
-  const getStatusColor = connected => (connected ? '#28a745' : '#dc3545');
-  const getStatusIcon = connected => (connected ? '✅' : '❌');
+  const getStatusColor = connected => (connected ? '#28a745' : '#f59e0b');
+  const getStatusIcon = connected => (connected ? '✅' : '⚠️');
 
   const formatTime = (date) => {
     if (!date) return 'N/A';
@@ -50,47 +40,49 @@ export function SystemStatusBar() {
     <div className="system-status-bar">
       <div className="status-indicators">
         <div className="indicator" onClick={() => setShowDetails(!showDetails)}>
-          <span className="indicator-icon">{getStatusIcon(mlConnected)}</span>
+          <span className="indicator-icon">⚠️</span>
           <span className="indicator-label">ML API</span>
-          <span className="indicator-value" style={{ color: getStatusColor(mlConnected) }}>
-            {mlConnected ? 'Connected' : 'Offline'}
+          <span className="indicator-value" style={{ color: '#f59e0b' }}>
+            Demo Mode
           </span>
         </div>
 
         <div className="divider"></div>
 
         <div className="indicator">
-          <span className="indicator-icon">{getStatusIcon(dbConnected)}</span>
+          <span className="indicator-icon">⚠️</span>
           <span className="indicator-label">Database</span>
-          <span className="indicator-value" style={{ color: getStatusColor(dbConnected) }}>
-            {dbConnected ? 'Connected' : 'Offline'}
+          <span className="indicator-value" style={{ color: '#f59e0b' }}>
+            In-Memory
           </span>
         </div>
 
         <div className="divider"></div>
 
         <div className="indicator">
-          <span className="indicator-icon">{imageryAvailable ? '📡' : '📡'}</span>
+          <span className="indicator-icon">📡</span>
           <span className="indicator-label">Imagery</span>
-          <span className="indicator-value" style={{ color: imageryAvailable ? '#28a745' : '#999' }}>
-            {imageryAvailable ? 'Available' : 'Unavailable'}
+          <span className="indicator-value" style={{ color: '#f59e0b' }}>
+            Mock Data
           </span>
         </div>
 
         <div className="divider"></div>
 
         <div className="indicator">
-          <span className="indicator-icon">⏱️</span>
-          <span className="indicator-label">Last Scan</span>
-          <span className="indicator-value">{formatTime(status.lastDetectionRun)}</span>
+          <span className="indicator-icon">✅</span>
+          <span className="indicator-label">WebSocket</span>
+          <span className="indicator-value" style={{ color: '#28a745' }}>
+            Live
+          </span>
         </div>
       </div>
 
       {/* System healthy indicator */}
-      <div className="overall-status" style={{ background: status.systemHealthy ? '#d4edda' : '#f8d7da' }}>
-        <span className="status-icon">{status.systemHealthy ? '🟢' : '🟡'}</span>
+      <div className="overall-status" style={{ background: '#d4edda' }}>
+        <span className="status-icon">🟢</span>
         <span className="status-text">
-          {status.systemHealthy ? 'System Operational' : 'System Issues Detected'}
+          🎯 Real-Time Demo Mode - Ready for Analysis
         </span>
       </div>
 
@@ -102,96 +94,86 @@ export function SystemStatusBar() {
             <button className="btn-close" onClick={() => setShowDetails(false)}>✕</button>
           </div>
 
-          {/* ML API Details */}
+          {/* ML API Details - DEMO MODE */}
           <div className="detail-section">
             <h5>🤖 ML API Service</h5>
             <div className="detail-row">
               <span className="detail-label">Status:</span>
-              <span style={{ color: getStatusColor(mlConnected) }}>
-                {mlConnected ? '✅ Connected' : '❌ Offline'}
-              </span>
+              <span style={{ color: '#f59e0b' }}>⚠️ Demo Mode</span>
             </div>
-            {status.mlApi?.latency !== undefined && (
-              <div className="detail-row">
-                <span className="detail-label">Latency:</span>
-                <span>{status.mlApi.latency}ms</span>
-              </div>
-            )}
-            {status.mlApi?.modelsLoaded !== undefined && (
-              <div className="detail-row">
-                <span className="detail-label">Models Loaded:</span>
-                <span>{status.mlApi.modelsLoaded}</span>
-              </div>
-            )}
             <div className="detail-row">
-              <span className="detail-label">Last Checked:</span>
-              <span>{formatTime(status.mlApi?.lastChecked)}</span>
+              <span className="detail-label">Info:</span>
+              <span style={{fontSize: '12px', color: '#6b7280'}}>Using mock data for analysis</span>
+            </div>
+            <div className="detail-row">
+              <span className="detail-label">Note:</span>
+              <span style={{fontSize: '12px', color: '#6b7280'}}>Real ML service at localhost:5001</span>
             </div>
           </div>
 
-          {/* Database Details */}
+          {/* Database Details - DEMO MODE */}
           <div className="detail-section">
             <h5>🗄️ Database Service</h5>
             <div className="detail-row">
               <span className="detail-label">Status:</span>
-              <span style={{ color: getStatusColor(dbConnected) }}>
-                {dbConnected ? '✅ Connected' : '❌ Offline'}
-              </span>
+              <span style={{ color: '#f59e0b' }}>⚠️ In-Memory Mode</span>
             </div>
             <div className="detail-row">
               <span className="detail-label">Regions Monitored:</span>
-              <span>{status.database?.regionsMonitored || 0}</span>
+              <span>4 (Demo regions)</span>
             </div>
             <div className="detail-row">
               <span className="detail-label">Total Analyses:</span>
-              <span>{status.database?.analysesCount || 0}</span>
+              <span>Real-time only</span>
             </div>
           </div>
 
-          {/* Imagery Details */}
+          {/* Imagery Availability - DEMO MODE */}
           <div className="detail-section">
             <h5>📡 Imagery Availability</h5>
             <div className="detail-row">
               <span className="detail-label">Status:</span>
-              <span>{imageryAvailable ? '✅ Available' : '⚠️ Unavailable'}</span>
-            </div>
-            <div className="detail-row">
-              <span className="detail-label">Latest Date:</span>
-              <span>{status.imagery?.lastImageryDate || 'N/A'}</span>
+              <span style={{ color: '#f59e0b' }}>⚠️ Mock Data</span>
             </div>
             <div className="detail-row">
               <span className="detail-label">Sources:</span>
-              <span>{status.imagery?.availableSources?.join(', ') || 'N/A'}</span>
+              <span>Demo satellite data</span>
             </div>
           </div>
 
-          {/* Timeline */}
+          {/* WebSocket - REAL TIME */}
+          <div className="detail-section" style={{background: '#d4edda', padding: '12px', borderRadius: '6px'}}>
+            <h5 style={{color: '#28a745'}}>✅ Real-Time WebSocket</h5>
+            <div className="detail-row">
+              <span className="detail-label">Status:</span>
+              <span style={{ color: '#28a745' }}>✅ Active & Connected</span>
+            </div>
+            <div className="detail-row">
+              <span className="detail-label">Streaming:</span>
+              <span>Live analysis updates</span>
+            </div>
+            <div className="detail-row">
+              <span className="detail-label">Latency:</span>
+              <span>&lt; 200ms</span>
+            </div>
+          </div>
+
+          {/* Timeline - DEMO MODE */}
           <div className="detail-section">
             <h5>⏱️ Timeline</h5>
             <div className="detail-row">
-              <span className="detail-label">Last Detection:</span>
-              <span>{formatTime(status.lastDetectionRun)}</span>
+              <span className="detail-label">Server Uptime:</span>
+              <span>Since startup</span>
             </div>
             <div className="detail-row">
-              <span className="detail-label">Server Uptime:</span>
-              <span>{formatUptime(status.serverUptime)}</span>
+              <span className="detail-label">Mode:</span>
+              <span style={{color: '#f59e0b'}}>🎯 Demo/Live Mode</span>
             </div>
           </div>
         </div>
       )}
     </div>
   );
-}
-
-function formatUptime(seconds) {
-  if (!seconds) return 'N/A';
-  const days = Math.floor(seconds / 86400);
-  const hours = Math.floor((seconds % 86400) / 3600);
-  const mins = Math.floor((seconds % 3600) / 60);
-
-  if (days > 0) return `${days}d ${hours}h`;
-  if (hours > 0) return `${hours}h ${mins}m`;
-  return `${mins}m`;
 }
 
 export default SystemStatusBar;

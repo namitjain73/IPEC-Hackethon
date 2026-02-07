@@ -5,7 +5,7 @@ const { fetchLatestImagery: fetchAgromonitoring, generateMockData: generateAgroM
 // Configuration - SENTINEL HUB PRIMARY
 // AGROMONITORING FALLBACK
 // ============================================
-const ENABLE_REAL_SATELLITE_API = process.env.ENABLE_REAL_SATELLITE_API === 'true';
+const ENABLE_REAL_SATELLITE_API = true; // ✅ ENABLED FOR REAL DATA
 const SENTINEL_HUB_AUTH_TOKEN = process.env.SENTINEL_HUB_TOKEN || 'PLAKe3dfcf56b8d440d797be4e9ef1102d46';
 const SENTINEL_HUB_REGION = process.env.SENTINEL_HUB_REGION || 'eu'; // 'eu' or 'us'
 

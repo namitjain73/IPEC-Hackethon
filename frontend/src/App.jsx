@@ -12,6 +12,7 @@ import { api } from './services/api';
 import { AlertsPanel } from './components/AlertsPanel';
 import { ReportsPanel } from './components/ReportsPanel';
 import { useAnalysis } from './hooks/useAnalysis';
+import { initializeWebSocket, subscribeToRegion, onAnalysisResult, onAnalysisProgress, onJobQueued } from './services/websocket';
 import './App.css';
 
 const DEFAULT_REGIONS = [
@@ -60,6 +61,40 @@ function App() {
     analysis.checkHealth();
     analysis.getLatestAnalyses();
     analysis.getStats();
+    
+    // Initialize WebSocket connection for real-time updates
+    console.log('[App] Initializing WebSocket connection...');
+    initializeWebSocket('http://localhost:5000');
+    
+    // Set up real-time event listeners
+    onAnalysisResult((data) => {
+      console.log('[App] Received analysis result via WebSocket:', data);
+      analysis.addAnalysis({
+        ...data,
+        success: true,
+      });
+    });
+
+    onAnalysisProgress((data) => {
+      console.log('[App] Analysis progress update:', data);
+      setCurrentAnalyzingRegion({
+        name: data.region,
+        progress: data.progress,
+        status: data.status
+      });
+    });
+
+    onJobQueued((data) => {
+      console.log('[App] Analysis job queued:', data);
+      setDetectedProblems(prev => [...prev, {
+        id: data.jobId,
+        severity: 'info',
+        message: `Analysis job queued: ${data.jobId}`,
+        timestamp: new Date(),
+        region: data.region
+      }]);
+    });
+    
     // Fetch regions from backend on app load
     fetchRegionsFromBackend();
   }, []);
@@ -94,7 +129,7 @@ function App() {
   // Fetch all regions from backend (including custom ones saved to DB)
   const fetchRegionsFromBackend = async () => {
     try {
-      const response = await api.get('/api/regions');
+      const response = await api.get('/regions');
       if (response.data && Array.isArray(response.data)) {
         // Merge with default regions, custom regions will be added
         const backendRegions = response.data.map(r => ({
@@ -132,6 +167,10 @@ function App() {
       if (regionObj) {
         analysis.setSelectedRegion(regionObj);
       }
+      
+      // Subscribe to real-time updates for this region via WebSocket
+      console.log('[App] Subscribing to WebSocket for region:', name);
+      subscribeToRegion(name);
       
       // Fetch history for this region
       fetchAnalysisHistory(name);

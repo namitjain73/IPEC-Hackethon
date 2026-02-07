@@ -49,31 +49,51 @@ async function performAnalysis(region, previousAnalysis = null) {
         },
         satelliteData: {
           bbox: [region.latitude - 0.5, region.longitude - 0.5, region.latitude + 0.5, region.longitude + 0.5],
-          dataSource: 'Demo Data',
+          dataSource: 'Demo Region',
           mlApiStatus: 'demo',
+          fallbackUsed: false,
         },
       };
       console.log(`[Analysis] Returning demo response:`, response.riskClassification);
       return response;
     }
 
-    let satelliteData = await fetchLatestImagery(region.latitude, region.longitude, region.sizeKm);
-
     console.log('\n╔════════════════════════════════════════════════════╗');
-    console.log('║         ML MODEL ANALYSIS PIPELINE                 ║');
+    console.log('║         SATELLITE DATA FETCH - WITH FALLBACK       ║');
     console.log('╚════════════════════════════════════════════════════╝\n');
 
-    if (!satelliteData.success && !satelliteData.fallbackData) {
-      console.warn(`[Analysis] Sentinel Hub API failed, using mock data. Error: ${satelliteData.error}`);
+    // Try to fetch real satellite data
+    let satelliteData = null;
+    let dataSource = 'Unknown';
+    let fallbackUsed = false;
+
+    try {
+      console.log('[Satellite] 📡 Attempting to fetch real Sentinel-2 imagery...');
+      satelliteData = await fetchLatestImagery(region.latitude, region.longitude, region.sizeKm);
+      
+      if (satelliteData && satelliteData.success) {
+        console.log('[Satellite] ✅ Real Sentinel-2 data retrieved successfully!');
+        dataSource = 'Sentinel-2 (Real)';
+        console.log(`[Satellite] Features found: ${satelliteData.featuresFound || 0}`);
+        console.log(`[Satellite] Fetch duration: ${satelliteData.fetchDuration || 'N/A'}s\n`);
+      } else {
+        throw new Error(satelliteData?.error || 'Satellite API returned no data');
+      }
+    } catch (satelliteError) {
+      console.warn(`[Satellite] ⚠️  Failed to fetch real data: ${satelliteError.message}`);
+      console.log('[Satellite] 🔄 Switching to fallback: Generating mock satellite data...\n');
+      
       satelliteData = generateMockSatelliteData(region.latitude, region.longitude);
-      console.log('[Analysis] ⚠️  Data source: MOCK (demo mode)\n');
-    } else if (satelliteData.source === 'real') {
-      console.log('[Analysis] ✅ Data source: REAL Sentinel-2 imagery');
-      console.log(`[Analysis] Features available: ${satelliteData.featuresFound || 0}`);
-      console.log(`[Analysis] Fetch time: ${satelliteData.fetchDuration || 'N/A'}s\n`);
-    } else {
-      console.log('[Analysis] Data source: Mock data (fallback)\n');
+      dataSource = 'Mock Data (Fallback)';
+      fallbackUsed = true;
+      
+      console.log('[Satellite] ✅ Mock data generated successfully');
+      console.log('[Satellite] System will continue with analysis using simulated data\n');
     }
+
+    console.log('╔════════════════════════════════════════════════════╗');
+    console.log('║         ML MODEL ANALYSIS PIPELINE                 ║');
+    console.log('╚════════════════════════════════════════════════════╝\n');
 
     const { nirBand, redBand } = extractBands(satelliteData);
     console.log('[ML-Model-1] NDVI Predictor: Processing satellite bands...');
@@ -130,13 +150,20 @@ async function performAnalysis(region, previousAnalysis = null) {
       regionName: region.name,
       timestamp: new Date(),
       executionTime: `${executionTime}ms`,
-      ndvi: ndviResult,
-      changeDetection: changeDetectionResult,
-      riskClassification: riskClassification,
+      ndvi: ndviResult?.ndvi || ndviResult,
+      vegetationLossPercentage: riskClassification?.vegetationLossPercentage || 0,
+      areaAffected: riskClassification?.areaAffected || 0,
+      confidenceScore: riskClassification?.confidenceScore || 0.85,
+      riskClassification: {
+        riskLevel: riskClassification?.level || 'low',
+        riskScore: riskClassification?.score || 0,
+      },
+      changeDetection: changeDetectionResult?.statistics || changeDetectionResult,
       satelliteData: {
         bbox: satelliteData.bbox,
-        dataSource: satelliteData.data?.features?.[0]?.properties?.platform || 'Unknown',
-        mlApiStatus: 'fallback',
+        dataSource: dataSource,
+        fallbackUsed: fallbackUsed,
+        mlApiStatus: fallbackUsed ? 'fallback-mock' : 'real-data',
       },
     };
   } catch (error) {
