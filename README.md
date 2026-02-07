@@ -1,4 +1,4 @@
-# 🛰️ Satellite Monitoring System
+# 🌳 ForestGuard - Satellite Monitoring System
 ## **Local Development Edition**
 
 **Professional full-stack application for detecting deforestation, illegal mining, and environmental degradation using satellite imagery**

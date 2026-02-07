@@ -1,6 +1,6 @@
-# Frontend - Satellite Monitoring System
+# ForestGuard - Frontend
 
-This folder contains the **React + Vite** frontend for the Satellite Monitoring System.
+This folder contains the **React + Vite** frontend for ForestGuard - Real-time Forest Monitoring System.
 
 ## 📁 Directory Structure
 

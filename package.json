@@ -1,7 +1,7 @@
 {
-  "name": "satellite-monitoring-system",
+  "name": "forestguard",
   "version": "1.0.0",
-  "description": "Satellite Monitoring System - Full Stack Application",
+  "description": "ForestGuard - Real-time Satellite Monitoring for Forest Protection",
   "private": true,
   "scripts": {
     "build": "cd frontend && npm run build",

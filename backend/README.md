@@ -1,6 +1,6 @@
-# Backend - Satellite Monitoring System
+# ForestGuard - Backend
 
-This folder contains the **Node.js + Express.js + MongoDB** backend for the Satellite Monitoring System.
+This folder contains the **Node.js + Express.js + MongoDB** backend for ForestGuard - Real-time Forest Monitoring System.
 
 ## 📁 Directory Structure
 

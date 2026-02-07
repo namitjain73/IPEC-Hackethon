@@ -12,7 +12,6 @@ import { api } from './services/api';
 import { AlertsPanel } from './components/AlertsPanel';
 import { ReportsPanel } from './components/ReportsPanel';
 import { useAnalysis } from './hooks/useAnalysis';
-import RequestlyDemoPanel from './components/RequestlyDemoPanel';
 import './App.css';
 
 const DEFAULT_REGIONS = [
@@ -350,7 +349,7 @@ function App() {
       <div className="bg-gradient-to-r from-green-700 via-emerald-700 to-teal-700 text-white py-8 shadow-lg">
         <div className="max-w-7xl mx-auto px-4">
           <h1 className="text-4xl font-bold">
-            🌍 Satellite Monitoring System
+            � ForestGuard
           </h1>
           <p className="text-green-100 mt-2">
             Real-time satellite monitoring for forest protection and vegetation analysis
@@ -455,11 +454,6 @@ function App() {
 
         {renderContent()}
       </div>
-
-      {/* Requestly Demo Panel - For testing different scenarios */}
-      <RequestlyDemoPanel onScenarioChange={(scenarioData) => {
-        console.log('Switched to scenario:', scenarioData);
-      }} />
     </div>
   );
 }

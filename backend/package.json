@@ -1,7 +1,7 @@
 {
   "name": "satellite-monitoring-backend",
   "version": "1.0.0",
-  "description": "MERN Stack Backend for Satellite Monitoring System",
+  "description": "ForestGuard - Backend API for Real-time Forest Monitoring",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
