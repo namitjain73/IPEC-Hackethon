@@ -1,0 +1,32 @@
+@import './components/UnifiedCards.css';
+
+.leaflet-container {
+  z-index: 1;
+}
+
+button,
+input,
+select,
+textarea {
+  transition: all 0.3s ease;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2rem;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

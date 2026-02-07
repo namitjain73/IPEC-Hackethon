@@ -1,0 +1,369 @@
+.explainability-panel {
+  background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+  border-radius: 12px;
+  padding: 20px;
+  margin: 15px 0;
+  color: #333;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #667eea;
+}
+
+.explainability-panel.loading,
+.explainability-panel.error,
+.explainability-panel.empty {
+  text-align: center;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 150px;
+}
+
+.explainability-panel.error {
+  background: #ffe0e0;
+  border-left-color: #dc3545;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f0f0f0;
+  border-top: 4px solid #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 12px;
+}
+
+.panel-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #333;
+}
+
+.btn-close {
+  background: #f0f0f0;
+  border: none;
+  color: #666;
+  font-size: 20px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-close:hover {
+  background: #e0e0e0;
+  color: #333;
+}
+
+/* Summary section */
+.summary-section {
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  border: 1px solid #e0e0e0;
+}
+
+.summary-text {
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 12px;
+  color: #555;
+}
+
+/* Risk badge */
+.risk-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border: 2px solid;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.risk-badge .label {
+  color: #666;
+  font-size: 12px;
+}
+
+.risk-badge .value {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* Confidence indicator */
+.confidence-indicator {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.confidence-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.confidence-bar {
+  grid-column: 1 / -1;
+  height: 12px;
+  background: #e0e0e0;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.confidence-fill {
+  height: 100%;
+  transition: width 0.4s ease;
+}
+
+.confidence-text {
+  font-size: 14px;
+  font-weight: 700;
+  color: #333;
+}
+
+/* Reasons section */
+.reasons-section {
+  margin: 20px 0;
+}
+
+.reasons-section h4 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #333;
+}
+
+.reasons-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.reason-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.reason-card.severity-high {
+  border-left: 4px solid #dc3545;
+}
+
+.reason-card.severity-medium {
+  border-left: 4px solid #ffc107;
+}
+
+.reason-card.severity-low {
+  border-left: 4px solid #28a745;
+}
+
+.reason-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.reason-card.expanded {
+  background: #f8f9fa;
+}
+
+.reason-header {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 15px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+  transition: background 0.2s;
+}
+
+.reason-header:hover {
+  background: #f8f9fa;
+}
+
+.reason-title-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.severity-icon {
+  font-size: 18px;
+}
+
+.reason-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+}
+
+.reason-metric {
+  font-size: 12px;
+  font-weight: 600;
+  background: #f0f0f0;
+  padding: 4px 8px;
+  border-radius: 4px;
+  color: #666;
+  white-space: nowrap;
+}
+
+.expand-icon {
+  font-size: 12px;
+  color: #999;
+  transition: transform 0.2s;
+  width: 20px;
+  text-align: center;
+}
+
+.reason-card.expanded .expand-icon {
+  transform: rotate(0deg);
+}
+
+.reason-details {
+  padding: 12px 15px;
+  border-top: 1px solid #e0e0e0;
+  background: #f8f9fa;
+}
+
+.reason-explanation {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #555;
+}
+
+.no-reasons {
+  padding: 20px;
+  text-align: center;
+  color: #999;
+}
+
+/* Primary factor */
+.primary-factor {
+  background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+  padding: 12px 15px;
+  border-radius: 8px;
+  border-left: 3px solid #667eea;
+  margin: 15px 0;
+}
+
+.primary-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #667eea;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.primary-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: #333;
+}
+
+/* Secondary factors */
+.secondary-factors {
+  margin: 15px 0;
+}
+
+.secondary-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #666;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.secondary-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.secondary-item {
+  background: #667eea;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Recommendation */
+.recommendation {
+  background: #e8f5e9;
+  border-left: 3px solid #28a745;
+  padding: 12px 15px;
+  border-radius: 6px;
+  margin-top: 15px;
+}
+
+.recommendation p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #2e7d32;
+}
+
+.recommendation strong {
+  color: #1b5e20;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .explainability-panel {
+    padding: 15px;
+  }
+
+  .reason-header {
+    grid-template-columns: auto 1fr;
+  }
+
+  .reason-metric {
+    grid-column: 1 / -1;
+    margin-top: 8px;
+  }
+
+  .secondary-list {
+    gap: 6px;
+  }
+
+  .secondary-item {
+    padding: 5px 10px;
+    font-size: 11px;
+  }
+}

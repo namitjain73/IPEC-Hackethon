@@ -1,0 +1,160 @@
+# ==============================
+# Node.js / MERN (Frontend + Backend)
+# ==============================
+
+# Dependencies
+node_modules/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# Environment variables (Secrets)
+.env
+.env.local
+.env.development
+.env.production
+
+# Build outputs
+frontend/build/
+frontend/dist/
+backend/dist/
+
+# Cache folders
+.cache/
+.next/
+out/
+
+# ==============================
+# React Frontend
+# ==============================
+
+frontend/node_modules/
+frontend/.env
+frontend/build/
+
+# ==============================
+# Node Backend
+# ==============================
+
+backend/node_modules/
+backend/.env
+
+# ==============================
+# Python / ML Model Folder
+# ==============================
+
+# Virtual environment
+ml_model/venv/
+ml_model/env/
+ml_model/.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Model files (optional: large files)
+*.h5
+*.pkl
+*.joblib
+*.pt
+*.onnx
+
+# Dataset files (optional)
+*.csv
+*.xlsx
+data/
+datasets/
+
+# ==============================
+# IDE / Editor Settings
+# ==============================
+
+.vscode/
+.idea/
+*.iml
+
+# ==============================
+# OS System Files
+# ==============================
+
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ==============================
+# Temporary Files
+# ==============================
+
+*.tmp
+*.swp
+*.bak
+.cache/
+
+# System files
+.git/
+.gitkeep
+
+# IDE temp files
+.vscode/settings.json
+.idea/workspace.xml
+
+# OS files
+*.DS_Store
+*.swp
+.AppleDouble
+.LSOverride
+
+# Misc
+.env.*.local
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+pids/
+*.pid
+*.seed
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Output of 'npm v1.0.0'
+*.tar.gz
+
+# dotenv environment variables file
+.env
+
+# Byte-compiled / optimized / DLL files
+*.o
+
+# Large files (data, models)
+*.tar
+*.zip
+*.rar
+data/
+datasets/
+
+# Temporary build files
+.turbo
+.cache
+node_modules
+node_modules
+node_modules
+node_modules
+node_modules
+node_modules
+node_modules
+package-lock.json

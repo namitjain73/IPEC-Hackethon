@@ -1,0 +1,47 @@
+{
+  "ndvi_predictor": {
+    "mse": 0.002857329534361879,
+    "rmse": 0.05345399455945158,
+    "mae": 0.04980227972594138,
+    "r2_score": -1.3211250705671258
+  },
+  "change_detector": {
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1_score": 1.0,
+    "confusion_matrix": [
+      [
+        4,
+        0
+      ],
+      [
+        0,
+        2
+      ]
+    ]
+  },
+  "risk_classifier": {
+    "accuracy": 0.8333333333333334,
+    "precision": 0.875,
+    "recall": 0.8333333333333334,
+    "f1_score": 0.8174603174603173,
+    "confusion_matrix": [
+      [
+        1,
+        1,
+        0
+      ],
+      [
+        0,
+        3,
+        0
+      ],
+      [
+        0,
+        0,
+        1
+      ]
+    ]
+  }
+}

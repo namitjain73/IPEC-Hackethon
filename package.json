@@ -1,0 +1,13 @@
+{
+  "name": "satellite-monitoring-system",
+  "version": "1.0.0",
+  "description": "Satellite Monitoring System - Full Stack Application",
+  "private": true,
+  "scripts": {
+    "build": "cd frontend && npm run build",
+    "dev": "cd frontend && npm run dev"
+  },
+  "workspaces": [
+    "frontend"
+  ]
+}
